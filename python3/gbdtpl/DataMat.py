@@ -14,6 +14,9 @@ class DataMat:
         if reference is None:
             self.LinearGBMLib.CreateLinearGBMDataMat(self.booster_config, c_char_p(name.encode("utf-8")),
                                             c_int(label_index), c_int(query_index), c_char_p(file_path.encode("utf-8")), byref(self.data_mat), c_void_p(0))
-        else: 
+        else:
             self.LinearGBMLib.CreateLinearGBMDataMat(self.booster_config, c_char_p(name.encode("utf-8")),
                                                 c_int(label_index), c_int(query_index), c_char_p(file_path.encode("utf-8")), byref(self.data_mat), reference.data_mat)
+
+    def __del__(self):
+        self.LinearGBMLib.DestroyLinearGBMDataMat(self.data_mat)

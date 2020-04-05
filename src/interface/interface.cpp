@@ -79,12 +79,12 @@ int SetLinearGBMParams(LinearGBMBoosterConfig booster_config,
         config->goss_alpha = std::atof(value);
     }
     else if(string_key == "goss_beta") {
-        config->goss_beta = std::atof(value);           
+        config->goss_beta = std::atof(value);
     }
     else {
         assert(false);
-    } 
-    
+    }
+
     return 0;
 }
 
@@ -97,7 +97,7 @@ int CreateLinearGBM(LinearGBMBoosterConfig booster_config,
     BoosterConfig& booster_configg = *static_cast<BoosterConfig*>(booster_config);
     DataMat& train_dataa = *static_cast<DataMat*>(train_data);
     DataMat& test_dataa = *static_cast<DataMat*>(test_data);
-    *out = new Booster(*static_cast<BoosterConfig*>(booster_config), *static_cast<DataMat*>(train_data), *static_cast<DataMat*>(test_data));    
+    *out = new Booster(*static_cast<BoosterConfig*>(booster_config), *static_cast<DataMat*>(train_data), *static_cast<DataMat*>(test_data));
     return 0;
 }
 
@@ -105,11 +105,19 @@ int CreateLinearGBMDataMat(LinearGBMBoosterConfig booster_config, const char* na
                            int label_index, int query_index,
                            const char* file_path, LinearGBMDataMat *out, LinearGBMDataMat reference) {
 
-    if(reference != nullptr) { 
-	    *out = new DataMat(*(BoosterConfig*)booster_config, string(name), label_index, query_index, string(file_path), (DataMat*)reference);  
+    if(reference != nullptr) {
+	    *out = new DataMat(*(BoosterConfig*)booster_config, string(name), label_index, query_index, string(file_path), (DataMat*)reference);
     }
     else {
- 	    *out = new DataMat(*(BoosterConfig*)booster_config, string(name), label_index, query_index, string(file_path));  
+ 	    *out = new DataMat(*(BoosterConfig*)booster_config, string(name), label_index, query_index, string(file_path));
+    }
+    return 0;
+}
+
+int DestroyLinearGBMDataMat(LinearGBMDataMat mat) {
+    if (mat) {
+        DataMat *mat_p = (DataMat *)mat;
+        delete mat_p;
     }
     return 0;
 }
@@ -124,11 +132,11 @@ int LinearGBMPrintBoosterConfig(LinearGBMBoosterConfig booster_config) {
     ((BoosterConfig*)booster_config)->PrintAllParams();
 }
 
-int LinearGBMPredict(LinearGBM booster, LinearGBMDataMat test_data, double** preds, int *num_data, int iters) {  
+int LinearGBMPredict(LinearGBM booster, LinearGBMDataMat test_data, double** preds, int *num_data, int iters) {
     DataMat &test_dataa = *(DataMat*)(test_data);
     test_dataa.predict_values.resize(test_dataa.num_data, 0.0);
     ((Booster*)booster)->Predict(test_dataa, test_dataa.predict_values, iters);
-    *preds = test_dataa.predict_values.data(); 
+    *preds = test_dataa.predict_values.data();
     *num_data = test_dataa.num_data;
 }
 
